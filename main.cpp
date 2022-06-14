@@ -33,9 +33,9 @@ Please explore the python wrappers and the interactive APR mode to understand ho
 #include <functional>
 #include <string>
 
-#include "ConfigAPR.h"
-#include "io/APRFile.hpp"
-#include "algorithm/APRConverter.hpp"
+#include "APR/ConfigAPR.h"
+#include "APR/io/APRFile.hpp"
+#include "APR/algorithm/APRConverter.hpp"
 
 struct cmdLineOptions{
 
@@ -61,7 +61,7 @@ int runAPR(cmdLineOptions options) {
     //the apr datastructure
     APR apr;
 
-    APRConverter<uint16_t> aprConverter;
+    APRConverter<float> aprConverter;
 
     //read in the command line options into the parameters file
 
@@ -90,8 +90,7 @@ int runAPR(cmdLineOptions options) {
     if(aprConverter.get_apr(apr, input_img)){
 
         ParticleData<uint16_t> particle_intensities;
-        particle_intensities.sample_parts_from_img_downsampled(apr,input_img); // sample your particles from your image
-        //Below is IO and outputting of the Implied Resolution Function through the Particle Cell level.
+        particle_intensities.sample_image(apr, input_img); // sample your particles from your image
 
         //output
         std::string save_loc = options.output_dir;
@@ -110,10 +109,8 @@ int runAPR(cmdLineOptions options) {
 
         aprFile.open(save_loc + file_name + ".apr");
 
-        aprFile.set_read_write_tree(false); //not writing tree to file.
-
         aprFile.write_apr(apr);
-        aprFile.write_particles("particles",particle_intensities);
+        aprFile.write_particles("particles", particle_intensities);
 
         float apr_file_size = aprFile.current_file_size_MB();
 
@@ -122,7 +119,7 @@ int runAPR(cmdLineOptions options) {
         float computational_ratio = (1.0f* apr.org_dims(0)* apr.org_dims(1)* apr.org_dims(2))/(1.0f*apr.total_number_particles());
 
         std::cout << std::endl;
-        std::cout << "Computational Ratio (Pixels/Particles): " << computational_ratio << std::endl;
+        std::cout << "Computational Ratio (#Pixels/#Particles): " << computational_ratio << std::endl;
         std::cout << "Lossy Compression Ratio: " << original_pixel_image_size/apr_file_size << std::endl;
         std::cout << std::endl;
 
