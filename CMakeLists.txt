@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # external libraries needed for APR
 find_package(HDF5 REQUIRED)
 find_package(TIFF REQUIRED)
-find_package(Apr CONFIG REQUIRED)
+find_package(APR CONFIG REQUIRED)
 find_package(OpenMP REQUIRED)
 
 #required tiff flag for APR lib
